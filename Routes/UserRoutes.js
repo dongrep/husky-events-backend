@@ -10,7 +10,7 @@ const {
   getUser,
   getUsersCount,
   getUserByToken,
-} = require("../controller/userController");
+} = require("../Controller/UserController");
 
 // Get  User
 router.get("/get/:userID", getUser);
