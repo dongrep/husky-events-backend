@@ -10,7 +10,8 @@ const {
   getUser,
   getUsersCount,
   getUserByToken,
-} = require("../Controller/UserController");
+  loginAdmin,
+} = require("../controller/userController");
 
 // Get  User
 router.get("/get/:userID", getUser);
@@ -32,6 +33,9 @@ router.delete("/delete/:userID", deleteUser);
 
 // Login User
 router.post("/login", loginUser);
+
+// Login Admin
+router.post("/loginAdmin", loginAdmin);
 
 // COUNT User
 router.get("/count", getUsersCount);
