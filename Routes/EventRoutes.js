@@ -27,7 +27,7 @@ router.post("/create", async (request, response) => {
       startTime,
       endTime,
       location,
-      image
+      image,
     )
   ) {
     response.status(204).send("Missing required fields");
@@ -88,29 +88,28 @@ router.put("/edit/:id", async (request, response) => {
   }
 
   try {
-  let neededEvent = await event.findOneAndUpdate(
-    { _id: _id },
-    {
-      name,
-      description,
-      organizer,
-      startTime,
-      endTime,
-      location,
-      locationUrl,
-      image,
-    }
-  );
-  
+    let neededEvent = await event.findOneAndUpdate(
+      { _id: _id },
+      {
+        name,
+        description,
+        organizer,
+        startTime,
+        endTime,
+        location,
+        locationUrl,
+        image,
+      },
+    );
 
-  if (!neededEvent) {
-    response.send("Event not found!");
-  } else {
-    response.json(request.body);
+    if (!neededEvent) {
+      response.send("Event not found!");
+    } else {
+      response.json(request.body);
+    }
+  } catch (err) {
+    console.log(err);
   }
-} catch (err) {
-  console.log(err);
-}
 });
 
 router.delete("/delete", async (request, response) => {
@@ -242,6 +241,33 @@ router.get("/getcreatedevents", async (request, response) => {
     }
 
     response.status(200).send(yourEvents);
+  }
+});
+
+router.get("/getregisteredusernames", async (request, response) => {
+  const { eventID } = request.query;
+
+  if (!eventID) {
+    response.status(400).send({ error: "Missing required fields" });
+    return;
+  }
+
+  const neededEvent = await event.findOne({ _id: eventID });
+
+  if (!neededEvent) {
+    response.status(404).send("Event not found!");
+  } else {
+    let registeredUsernames = [];
+
+    for (let i = 0; i < neededEvent.attendees?.length ?? 0; i++) {
+      let neededUser = await user.findOne({ _id: neededEvent.attendees[i] });
+      if(!neededUser) continue;
+      registeredUsernames.push(
+        neededUser.firstName + " " + neededUser.lastName,
+      );
+    }
+
+    response.status(200).send(registeredUsernames);
   }
 });
 
